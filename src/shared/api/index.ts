@@ -69,29 +69,29 @@ type RecipiesSearchDone = {
   };
 };
 
-export const recipiesSearchFx = createEffect<
-  RecipiesSearch,
-  RecipiesSearchDone
->((form) => {
-  const urlSearch = new URLSearchParams();
-  if (form.q) {
-    urlSearch.append("q", form.q);
-  }
-  if (form.mealType) {
-    form.mealType.forEach((mealType) => {
-      urlSearch.append("mealType", mealType);
-    });
-  }
-  if (form.calories) {
-    urlSearch.append("calories", String(form.calories));
-  }
+// export const recipiesSearchFx = createEffect<
+//   RecipiesSearch,
+//   RecipiesSearchDone
+// >((form) => {
+//   const urlSearch = new URLSearchParams();
+//   if (form.q) {
+//     urlSearch.append("q", form.q);
+//   }
+//   if (form.mealType) {
+//     form.mealType.forEach((mealType) => {
+//       urlSearch.append("mealType", mealType);
+//     });
+//   }
+//   if (form.calories) {
+//     urlSearch.append("calories", String(form.calories));
+//   }
 
-  return requestFx({
-    method: "GET",
-    path: `/?${urlSearch.toString()}`,
-    instance: "api",
-  });
-});
+//   return requestFx({
+//     method: "GET",
+//     path: `/?${urlSearch.toString()}`,
+//     instance: "api",
+//   });
+// });
 
 export const recipiesNextPageFx = createEffect<
   { nextUrl: string },
@@ -119,21 +119,28 @@ export type SignInError =
   | { error: "invalid_credentials" }
   | { error: "invalid_request" };
 
-export const signInFx = createEffect<SignIn, User, Error>((form)=>{
-  return mockapi.post('./signin', form)
-});
-
-export type SessionGetError = { error: "unauthorized" };
-
-export const sessionGetFx = createEffect<void, User, SessionGetError>(
-  async () => {
+export const signInFx = createEffect<SignIn, User, SignInError>(
+  async (form) => {
     await new Promise((resolve) => setTimeout(resolve, 600));
     return requestFx({
-      path: "/session",
-      method: "GET",
+      path: "/signin",
+      method: "POST",
+      body: form,
     });
   }
 );
+
+export type SessionGetError = { error: "unauthorized" };
+
+// export const sessionGetFx = createEffect<void, User, SessionGetError>(
+//   async () => {
+//     await new Promise((resolve) => setTimeout(resolve, 600));
+//     return requestFx({
+//       path: "/session",
+//       method: "GET",
+//     });
+//   }
+// );
 
 interface SignUp {
   username: string;
@@ -146,27 +153,27 @@ export type SignUpError =
   | { error: "invalid_credentials" }
   | { error: "user_exist" };
 
-export const signUpFx = createEffect<SignUp, null, SignUpError>(
-  async (form) => {
-    return requestFx({
-      path: "/signup",
-      method: "POST",
-      body: form,
-    });
-  }
-);
+// export const signUpFx = createEffect<SignUp, null, SignUpError>(
+//   async (form) => {
+//     return requestFx({
+//       path: "/signup",
+//       method: "POST",
+//       body: form,
+//     });
+//   }
+// );
 
 interface ConfirmPhone {
   code: string;
 }
 
-export const confirmPhone = createEffect<ConfirmPhone, User>(async (form) => {
-  return requestFx({
-    path: "/confirm",
-    method: "POST",
-    body: form,
-  });
-});
+// export const confirmPhone = createEffect<ConfirmPhone, User>(async (form) => {
+//   return requestFx({
+//     path: "/confirm",
+//     method: "POST",
+//     body: form,
+//   });
+// });
 
 type SignUpParams = {
   params: {

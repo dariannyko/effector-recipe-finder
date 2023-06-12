@@ -1,7 +1,6 @@
 import {
   TextInput,
   PasswordInput,
-  Checkbox,
   Anchor,
   Paper,
   Title,
@@ -14,7 +13,6 @@ import {
   Center,
   rem,
   Box,
-  em,
   Space,
 } from "@mantine/core";
 import {
@@ -39,33 +37,16 @@ import {
 } from "./model";
 import { useUnit } from "effector-react";
 import { FormEventHandler } from "react";
+import { debug } from "patronum";
 
 export function AuthPage() {
-  const [
-    email,
-    emailError,
-    onEmailChanged,
-    password,
-    passwordError,
-    onPasswordChanged,
-    passwordLoginPending,
-    webauthPending,
-    error,
-    onFormSubmitted,
-    formDisabled,
-  ] = useUnit([
-    $email,
-    $emailError,
-    emailChanged,
-    $password,
-    $passwordError,
-    passwordChanged,
-    $passwordLoginPending,
-    $webauthPending,
-    $error,
-    formSubmitted,
-    $formDisabled,
-  ]);
+  const [passwordLoginPending, webauthPending, onFormSubmitted, formDisabled] =
+    useUnit([
+      $passwordLoginPending,
+      $webauthPending,
+      formSubmitted,
+      $formDisabled,
+    ]);
 
   const onSubmit: FormEventHandler = (event) => {
     event.preventDefault();
@@ -154,6 +135,11 @@ export function AuthPage() {
   );
 }
 
+const emailErrorText = {
+  empty: "Email не может быть пустым",
+  invalid: "Неверный формат email",
+};
+
 export function Email() {
   const [email, emailError, onEmailChanged, formDisabled] = useUnit([
     $email,
@@ -171,10 +157,15 @@ export function Email() {
       value={email}
       onChange={(event) => onEmailChanged(event.target.value)}
       disabled={formDisabled}
-      error={emailError}
+      error={emailError ? emailErrorText[emailError] : null}
     />
   );
 }
+
+const passwordErrorText = {
+  empty: "Email не может быть пустым",
+  invalid: "Пароль слишком коротнкий",
+};
 
 export function Password() {
   const [password, passwordError, onPasswordChanged, formDisabled] = useUnit([
@@ -183,7 +174,7 @@ export function Password() {
     passwordChanged,
     $formDisabled,
   ]);
-  
+
   return (
     <PasswordInput
       label="password"
@@ -194,7 +185,7 @@ export function Password() {
       value={password}
       onChange={(event) => onPasswordChanged(event.target.value)}
       disabled={formDisabled}
-      error={passwordError}
+      error={passwordError ? passwordErrorText[passwordError] : null}
     />
   );
 }
@@ -209,6 +200,8 @@ export function ErrorView() {
   if (error?.error === "invalid_credentials") {
     return <Text c="red">Неверный логин и/или пароль</Text>;
   }
+
+  console.log("ERROR", error);
 
   return (
     <Text c="red">Что-то пошло не так, попробуйте еще раз, пожалуйста</Text>
